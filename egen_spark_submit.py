@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 # coding: utf-8
 
@@ -9,6 +10,7 @@ import pandas as pd
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
 from pyspark.sql.types import IntegerType
+from pyspark.sql.functions import *
 
 def main():
     query=""" SELECT * FROM `my-project-egen.egen_bigquery.egen-flight` """
@@ -65,6 +67,10 @@ def main():
     sparkDF = sparkDF.drop(col('LATE_AIRCRAFT_DELAY'))
     sparkDF = sparkDF.drop(col('WEATHER_DELAY'))
     
+    cols=["YEAR","MONTH","DAY"]
+    sparkDF= sparkDF.withColumn("date",concat_ws("-",*cols))
+
+    
     pandasDF = sparkDF.toPandas()
     pandasDF.to_gbq(destination_table="egen_bigquery.flight",project_id="my-project-egen",if_exists="replace")
 
@@ -73,6 +79,7 @@ if __name__ == "__main__":
      main()
 
 # In[ ]:
+
 
 
 
